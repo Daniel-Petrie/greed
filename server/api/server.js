@@ -1,12 +1,22 @@
 const express = require('express')
 const cors = require('cors')
 const helmet = require('helmet')
+const knex = require('knex')
 
 const server = express()
 
 server.use(cors())
 server.use(helmet())
 server.use(express.json())
+
+const userExists = async (auth0UserId) => {
+  const user = await knex('users').where(auth0Id, auth0Id).first();
+  return !!user
+}
+
+server.post('/api/register', async (req, res) => {
+const {sub, email, nickname})
+}
 
 server.get('/', (req, res) => {
   res.send('Welcome to greed!')
