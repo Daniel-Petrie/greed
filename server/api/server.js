@@ -14,8 +14,21 @@ const userExists = async (auth0UserId) => {
   return !!user
 }
 
-server.post('/api/register', async (req, res) => {
-const {sub, email, nickname})
+server.post('/api/register', async (req, res) => { 
+const {sub, email, nickname} = req.body)
+
+const isUserRegistered = await userExists(sub)
+
+if (isUserRegistered) {
+  console.log('user is already registered')
+
+  knex('users').insert({auth0UserId: sub, email, username: nickname}).then(()=> {
+    res.status(201).json({success: true, message: 'User registered succesfully'})
+  }).catch((error) => {
+    console.error(error)
+    res.status(500).json({success: false, message: 'Internal Server Error'})
+  })
+}
 }
 
 server.get('/', (req, res) => {
@@ -29,7 +42,7 @@ server.put('/api/user/:userId/')
 server.post('/api/user/:userId/bet')
 server.post('/api/user/:userId/win')
 server.post('/api/user/:userId/lose')
-
+ 1
 server.get('/api/leaderboard')
 
 module.exports = server
