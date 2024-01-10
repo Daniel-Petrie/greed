@@ -1,48 +1,60 @@
-const express = require('express')
-const cors = require('cors')
-const helmet = require('helmet')
-const knex = require('knex')
+  const express = require('express')
+  const cors = require('cors')
+  const helmet = require('helmet')
+  const knex = require('knex')
 
-const server = express()
+  const server = express()
 
-server.use(cors())
-server.use(helmet())
-server.use(express.json())
+  server.use(cors())
+  server.use(helmet())
+  server.use(express.json())
 
-const userExists = async (auth0UserId) => {
-  const user = await knex('users').where(auth0Id, auth0Id).first();
-  return !!user
-}
+  const userExists = async (auth0Id) => {
+    try {
+      console.log('checking user existence')
+      const user = await knex('users').where({ auth0Id }).first();
+      return !!user;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
-server.post('/api/register', async (req, res) => { 
-const {sub, email, nickname} = req.body)
 
-const isUserRegistered = await userExists(sub)
+  server.get('/', (req, res) => {
+    res.send('Welcome to greed!!');
+    console.log('POST /', req);
+  });
 
-if (isUserRegistered) {
-  console.log('user is already registered')
+  server.get('/api/hello', (req, res) => {
+    console.log('POST /api/hello', req);
+    res.send('Hello from the server!' );
+  });
 
-  knex('users').insert({auth0UserId: sub, email, username: nickname}).then(()=> {
-    res.status(201).json({success: true, message: 'User registered succesfully'})
-  }).catch((error) => {
-    console.error(error)
-    res.status(500).json({success: false, message: 'Internal Server Error'})
-  })
-}
-}
+  server.post('/api/register', async (req, res) => {
+    console.log('POST /api/register', req);
+    const { sub, email, nickname } = req.body; // Removed the extra parenthesis
 
-server.get('/', (req, res) => {
-  res.send('Welcome to greed!')
-})
+    const isUserRegistered = await userExists(sub);
 
-server.get('/api/user/:userId')
+    if (isUserRegistered) {
+      console.log('User is already registered');
 
-server.put('/api/user/:userId/')
+      knex('users').insert({ auth0Id: sub, email, username: nickname })
+        .then(() => {
+          res.status(201).json({ success: true, message: 'User registered successfully' });
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).json({ success: false, message: 'Internal Server Error' });
+        });
+    }
+  });
 
-server.post('/api/user/:userId/bet')
-server.post('/api/user/:userId/win')
-server.post('/api/user/:userId/lose')
- 1
-server.get('/api/leaderboard')
+  server.get('/api/user/:userId', (req, res) => {
+    // Handle getting a specific user
+  });
 
-module.exports = server
+  // Add handlers for other routes (PUT, POST, GET) as needed
+
+  module.exports = server;

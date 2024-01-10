@@ -14,6 +14,8 @@ exports.seed = async function(knex) {
   
     {auth0Id: '125', email: 'test@test.com', displayName: 'Ryan', chips: 1000, 
   },
+    {auth0Id: '126', email: 'test@test.com', displayName: 'Ryan', chips: 1000, 
+  },
   
   ]);
 };
